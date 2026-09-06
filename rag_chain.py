@@ -18,14 +18,14 @@ def run_hybrid_rag(query: str, verbose: bool = False):
     graph_results = get_movies()
     contextual_results = contextual_retrieve(query)
 
-    # 1. Clean Context Formatting
+    # Context formatting
     vector_text = "\n".join([doc.page_content for doc in vector_results])
     contextual_text = "\n".join(contextual_results)
     
     context_text = f"Vector Data:\n{vector_text}\n\nContextual Data:\n{contextual_text}"
 
-    # 2. Strict Role-based Prompt Engineering (Prevents dumping DB list)
-    prompt = f"""Answer the question clearly and concisely using only the information in the Context. Do not list unrelated items.
+    # Detailed summary prompt
+    prompt = f"""Based on the provided context, give a brief summary of the movie including year, genre, director, and plot description.
 
 Context:
 {context_text}
@@ -33,7 +33,7 @@ Context:
 Question: {query}
 Answer:"""
 
-    # 3. Direct Model Generation
+    # Direct Model Generation
     inputs = tokenizer(
         prompt, return_tensors="pt", truncation=True, max_length=512
     )
